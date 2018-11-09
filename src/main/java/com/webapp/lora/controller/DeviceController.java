@@ -26,15 +26,14 @@ public class DeviceController {
 
     @PostMapping("/add-device")
     public Map addDevice(@RequestBody LoginWrapper loginWrapper){
-
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
 
-
         if(userDb != null){
             loginWrapper.getDevice().setUserId(String.valueOf(userDb.getId()));
             deviceService.addDevice(loginWrapper.getDevice());
+
             return Collections.singletonMap("message","sucess add device");
         }
         return Collections.singletonMap("message","check login");

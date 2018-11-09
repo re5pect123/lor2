@@ -24,8 +24,8 @@ public class UserController {
 
     @PostMapping("/login")
     public Map login(@RequestBody User user){
-
         User existUser = userService.findAllByUserNameAndPassword(user.getUserName(), user.getPassword());
+
         if (existUser != null) {
             return Collections.singletonMap("message", "success login");
         }
