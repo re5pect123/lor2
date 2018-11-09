@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,10 +27,10 @@ public class DeviceController {
     @PostMapping("/add-device")
     public Map addDevice(@RequestBody LoginWrapper loginWrapper){
 
-        System.out.println(loginWrapper.getDevice().getAppEUI() + " " + loginWrapper.getUser().getUserName());
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
+
 
         if(userDb != null){
             loginWrapper.getDevice().setUserId(String.valueOf(userDb.getId()));
@@ -48,6 +49,18 @@ public class DeviceController {
         if(userDb != null){
             List<Device> allDevicesForUser = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
             return allDevicesForUser;
+        }
+        return null;
+    }
+
+    @PostMapping("/find-one-device")
+    public Device findById(@RequestBody LoginWrapper loginWrapper){
+        User userDb = userService.findAllByUserNameAndPassword(
+                loginWrapper.getUser().getUserName(),
+                loginWrapper.getUser().getPassword());
+
+        if(userDb != null){
+            return deviceService.findById(loginWrapper.getDevice().getId());
         }
         return null;
     }

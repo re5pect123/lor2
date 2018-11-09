@@ -20,4 +20,6 @@ public class DeviceService {
     public List<Device> findAllByUserId(String userId){
         return deviceRepository.findAllByUserId(userId);
     }
+
+    public Device findById(int id){ return deviceRepository.findById(id);}
 }

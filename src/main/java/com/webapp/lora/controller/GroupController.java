@@ -62,15 +62,16 @@ public class GroupController {
                 loginWrapper.getUser().getPassword());
 
         if(userDb != null){
-
             List<Group> groups = groupService.findAllByUserId(String.valueOf(userDb.getId()));
+
+            loginWrapper.getGroup().setName(groups.get(0).getName());
+            loginWrapper.getGroup().setUserId(String.valueOf(userDb.getId()));
             loginWrapper.getGroup().setId(groups.get(0).getId());
-            loginWrapper.getGroup().setDeviceId(String.valueOf(userDb.getId()));
             loginWrapper.getGroup().setDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
-            
+
             groupService.saveGroup(loginWrapper.getGroup());
 
-            return Collections.singletonMap("message","sucess add group");
+            return Collections.singletonMap("message","sucess add device to group");
         }
         return Collections.singletonMap("message","check login");
     }
