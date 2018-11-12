@@ -53,13 +53,14 @@ public class DeviceController {
     }
 
     @PostMapping("/find-one-device")
-    public Device findById(@RequestBody LoginWrapper loginWrapper){
+    public Device findByDevEUI(@RequestBody LoginWrapper loginWrapper){
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
 
         if(userDb != null){
-            return deviceService.findById(loginWrapper.getDevice().getId());
+            System.out.println("EUI " + loginWrapper.getDevice().getDevEUI());
+            return deviceService.findByDevEUI(loginWrapper.getDevice().getDevEUI());
         }
         return null;
     }

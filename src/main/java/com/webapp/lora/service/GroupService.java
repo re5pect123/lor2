@@ -25,4 +25,8 @@ public class GroupService {
         return groupRepository.findAllByUserId(deviceId);
     }
 
+    public Group findByName(String name) {return groupRepository.findByName(name);}
+
+
+
 }

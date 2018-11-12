@@ -13,6 +13,7 @@ public class Group {
     String name;
     String userId;
     String deviceId;
+    String activate;
 
     public int getId() {
         return id;
@@ -44,5 +45,13 @@ public class Group {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getActivate() {
+        return activate;
+    }
+
+    public void setActivate(String activate) {
+        this.activate = activate;
     }
 }

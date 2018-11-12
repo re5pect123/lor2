@@ -37,6 +37,7 @@ public class GroupController {
 
         if(userDb != null){
             loginWrapper.getGroup().setUserId(String.valueOf(userDb.getId()));
+            loginWrapper.getGroup().setActivate("y");
             groupService.saveGroup(loginWrapper.getGroup());
             return Collections.singletonMap("message","sucess add group");
         }
@@ -62,13 +63,19 @@ public class GroupController {
                 loginWrapper.getUser().getPassword());
 
         if(userDb != null){
+            // sve grupe koje pripadaju tom useru
             List<Group> groups = groupService.findAllByUserId(String.valueOf(userDb.getId()));
 
-            loginWrapper.getGroup().setName(groups.get(0).getName());
-            loginWrapper.getGroup().setUserId(String.valueOf(userDb.getId()));
-            loginWrapper.getGroup().setId(groups.get(0).getId());
-            loginWrapper.getGroup().setDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
-
+            for (int i = 0; i < groups.size(); i++) {
+                if (groups.get(i).getName().equals(loginWrapper.getGroup().getName())){
+                    loginWrapper.getGroup().setId(groups.get(i).getId());
+                    loginWrapper.getGroup().setDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
+                    loginWrapper.getGroup().setActivate("y");
+                    loginWrapper.getGroup().setUserId(groups.get(i).getUserId());
+                }else {
+                    return Collections.singletonMap("message","denied add device to group");
+                }
+            }
             groupService.saveGroup(loginWrapper.getGroup());
 
             return Collections.singletonMap("message","sucess add device to group");
@@ -84,5 +91,41 @@ public class GroupController {
                 loginWrapper.getUser().getPassword());
 
         return groupService.findAllByDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
+    }
+
+    @PostMapping("/activate-group")
+    public Map activateGroup(@RequestBody LoginWrapper loginWrapper){
+        User userDb = userService.findAllByUserNameAndPassword(
+                loginWrapper.getUser().getUserName(),
+                loginWrapper.getUser().getPassword());
+
+        Group updateGroup = groupService.findByName(loginWrapper.getGroup().getName());
+
+        loginWrapper.getGroup().setActivate("y");
+        loginWrapper.getGroup().setId(updateGroup.getId());
+        loginWrapper.getGroup().setName(updateGroup.getName());
+        loginWrapper.getGroup().setDeviceId(updateGroup.getDeviceId());
+        loginWrapper.getGroup().setUserId(updateGroup.getUserId());
+
+        groupService.saveGroup(loginWrapper.getGroup());
+        return Collections.singletonMap("message","sucess activate group");
+    }
+
+    @PostMapping("/deactivate-group")
+    public Map deactivateGroup(@RequestBody LoginWrapper loginWrapper){
+        User userDb = userService.findAllByUserNameAndPassword(
+                loginWrapper.getUser().getUserName(),
+                loginWrapper.getUser().getPassword());
+
+        Group updateGroup = groupService.findByName(loginWrapper.getGroup().getName());
+
+        loginWrapper.getGroup().setActivate("n");
+        loginWrapper.getGroup().setId(updateGroup.getId());
+        loginWrapper.getGroup().setName(updateGroup.getName());
+        loginWrapper.getGroup().setDeviceId(updateGroup.getDeviceId());
+        loginWrapper.getGroup().setUserId(updateGroup.getUserId());
+
+        groupService.saveGroup(loginWrapper.getGroup());
+        return Collections.singletonMap("message","sucess deactivate group");
     }
 }
