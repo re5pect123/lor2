@@ -1,0 +1,4 @@
+ ERROR main - 2018-11-14 11:48:26.816; - com.webapp.lora.LoraApplication - TEST *******
+ WARN main - 2018-11-14 11:48:26.832; - com.webapp.lora.LoraApplication - TEST *******
+ ERROR main - 2018-11-14 11:48:33.480; - com.webapp.lora.LoraApplication - TEST *******
+ WARN main - 2018-11-14 11:48:33.480; - com.webapp.lora.LoraApplication - TEST *******
