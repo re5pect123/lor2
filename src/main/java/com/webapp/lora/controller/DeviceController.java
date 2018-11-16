@@ -30,11 +30,18 @@ public class DeviceController {
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
 
+        Device existDevice = deviceService.findByDevEUI(loginWrapper.getDevice().getDevEUI());
+        if (existDevice != null){
+            if (existDevice.getDevEUI().equals(loginWrapper.getDevice().getDevEUI())){
+                return Collections.singletonMap("message","deviceEUI must be unique, you have one device with this name");
+            }
+        } else
         if(userDb != null){
             loginWrapper.getDevice().setUserId(String.valueOf(userDb.getId()));
+            loginWrapper.getDevice().setStatus("Active");
+            loginWrapper.getDevice().setBatteryStatus("89");
             deviceService.addDevice(loginWrapper.getDevice());
-
-            return Collections.singletonMap("message","sucess add device");
+            return Collections.singletonMap("message","sucess add new device");
         }
         return Collections.singletonMap("message","check login");
     }
@@ -59,7 +66,6 @@ public class DeviceController {
                 loginWrapper.getUser().getPassword());
 
         if(userDb != null){
-            System.out.println("EUI " + loginWrapper.getDevice().getDevEUI());
             return deviceService.findByDevEUI(loginWrapper.getDevice().getDevEUI());
         }
         return null;

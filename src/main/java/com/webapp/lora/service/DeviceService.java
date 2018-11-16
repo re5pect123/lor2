@@ -22,6 +22,5 @@ public class DeviceService {
     }
 
     public Device findByDevEUI(String name){
-        System.out.println("SERVICE NAME " + name);
         return deviceRepository.findByDevEUI(name);}
 }

@@ -16,6 +16,8 @@ public class Device {
     String appEUI; // aplication server
     String appKey; // message for device
     String userId;
+    String status;
+    String batteryStatus;
 
     public int getId() {
         return id;
@@ -55,5 +57,21 @@ public class Device {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getBatteryStatus() {
+        return batteryStatus;
+    }
+
+    public void setBatteryStatus(String batteryStatus) {
+        this.batteryStatus = batteryStatus;
     }
 }

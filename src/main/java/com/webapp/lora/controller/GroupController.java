@@ -29,21 +29,24 @@ public class GroupController {
 
     @PostMapping("/create-group")
     public Map saveGroup(@RequestBody LoginWrapper loginWrapper){
-
-
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
 
+        List<Group> existGroup = groupService.findAllByUserId(String.valueOf(userDb.getId()));
+        for(int i = 0; i < existGroup.size(); i ++){
+            if (existGroup.get(i).getName().equals(loginWrapper.getGroup().getName())){
+                return Collections.singletonMap("message","this group exist in db, create group with other name");
+            }
+        }
         if(userDb != null){
             loginWrapper.getGroup().setUserId(String.valueOf(userDb.getId()));
             loginWrapper.getGroup().setActivate("y");
             groupService.saveGroup(loginWrapper.getGroup());
-            return Collections.singletonMap("message","sucess add group");
+            return Collections.singletonMap("message","sucess add new group");
         }
         return Collections.singletonMap("message","check login");
     }
-
 
     @PostMapping("/find-all-group")
     public List<Group> findAllGroup(@RequestBody User user){
@@ -57,7 +60,6 @@ public class GroupController {
 
     @PostMapping("/add-device-to-group")
     public Map addDeviceToGroup(@RequestBody LoginWrapper loginWrapper){
-
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
@@ -67,18 +69,28 @@ public class GroupController {
             List<Group> groups = groupService.findAllByUserId(String.valueOf(userDb.getId()));
 
             for (int i = 0; i < groups.size(); i++) {
+                if (groups.get(i).getName().equals(loginWrapper.getGroup().getName())
+                        && groups.get(i).getDeviceId() != null
+                        && !groups.get(i).getDeviceId().equals(String.valueOf(loginWrapper.getDevice().getId()))) {
+
+                    loginWrapper.getGroup().setDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
+                    loginWrapper.getGroup().setActivate("y");
+                    loginWrapper.getGroup().setUserId(groups.get(i).getUserId());
+                    groupService.saveGroup(loginWrapper.getGroup());
+                    return Collections.singletonMap("message", "add new device to group");
+                }
+
                 if (groups.get(i).getName().equals(loginWrapper.getGroup().getName())){
                     loginWrapper.getGroup().setId(groups.get(i).getId());
                     loginWrapper.getGroup().setDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
                     loginWrapper.getGroup().setActivate("y");
                     loginWrapper.getGroup().setUserId(groups.get(i).getUserId());
                 }else {
-                    return Collections.singletonMap("message","denied add device to group");
+                    return Collections.singletonMap("message","denied add device to group, pls check group name");
                 }
             }
             groupService.saveGroup(loginWrapper.getGroup());
-
-            return Collections.singletonMap("message","sucess add device to group");
+            return Collections.singletonMap("message","add device to group");
         }
         return Collections.singletonMap("message","check login");
     }

@@ -18,8 +18,13 @@ public class UserController {
 
     @PostMapping("/register")
     public Map saveUser(@RequestBody User user){
+        User userNameExist = userService.findAllByUserName(user.getUserName());
+
+        if (userNameExist != null){
+            return Collections.singletonMap("message","This username exist in db, pls use different username");
+        }
         userService.saveUser(user);
-        return Collections.singletonMap("message","Success");
+        return Collections.singletonMap("message","Success register new user");
     }
 
     @PostMapping("/login")
@@ -29,8 +34,6 @@ public class UserController {
         if (existUser != null) {
             return Collections.singletonMap("message", "success login");
         }
-        return Collections.singletonMap("message", "check cred");
+        return Collections.singletonMap("message", "check cred, username or password incorect");
     }
-
-
 }
