@@ -1,6 +1,7 @@
 package com.webapp.lora.controller;
 
 import com.webapp.lora.entity.Device;
+import com.webapp.lora.entity.Group;
 import com.webapp.lora.entity.User;
 import com.webapp.lora.entity.wrapper.LoginWrapper;
 import com.webapp.lora.service.DeviceService;
@@ -38,7 +39,7 @@ public class DeviceController {
         } else
         if(userDb != null){
             loginWrapper.getDevice().setUserId(String.valueOf(userDb.getId()));
-            loginWrapper.getDevice().setStatus("Active");
+            loginWrapper.getDevice().setStatus("Deaktiviran");
             loginWrapper.getDevice().setBatteryStatus("89");
             deviceService.addDevice(loginWrapper.getDevice());
             return Collections.singletonMap("message","sucess add new device");
@@ -70,4 +71,51 @@ public class DeviceController {
         }
         return null;
     }
+
+    @PostMapping("/set-group-status")
+    public Map groupStatus(@RequestBody LoginWrapper loginWrapper){
+        User userDb = userService.findAllByUserNameAndPassword(
+                loginWrapper.getUser().getUserName(),
+                loginWrapper.getUser().getPassword());
+
+        if (userDb != null) {
+            List<Device> devices = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
+
+            for (int i = 0; i < devices.size(); i++) {
+                if (Integer.valueOf(devices.get(i).getGroupId()) == loginWrapper.getGroup().getId()) {
+                    Device dev = devices.get(i);
+                    dev.setStatus(loginWrapper.getDevice().getStatus());
+                    System.out.println(dev);
+                    deviceService.addDevice(dev);
+                }
+            }
+        }else {
+            return Collections.singletonMap("message", "Korisnik nije registrovan");
+        }
+        return Collections.singletonMap("message", "Status grupe je " + loginWrapper.getDevice().getStatus());
+    }
+
+    @PostMapping("/set-device-status")
+    public Map deviceStatus(@RequestBody LoginWrapper loginWrapper){
+        User userDb = userService.findAllByUserNameAndPassword(
+                loginWrapper.getUser().getUserName(),
+                loginWrapper.getUser().getPassword());
+
+        if (userDb != null) {
+            List<Device> devices = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
+
+            for (int i = 0; i < devices.size(); i++) {
+                if (Integer.valueOf(devices.get(i).getId()) == loginWrapper.getDevice().getId()) {
+                    Device dev = devices.get(i);
+                    dev.setStatus(loginWrapper.getDevice().getStatus());
+                    System.out.println(dev);
+                    deviceService.addDevice(dev);
+                }
+            }
+        }else {
+            return Collections.singletonMap("message", "Korisnik nije registrovan");
+        }
+        return Collections.singletonMap("message", "Status uredjaja je " + loginWrapper.getDevice().getStatus());
+    }
+
 }

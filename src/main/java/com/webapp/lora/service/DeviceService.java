@@ -21,6 +21,7 @@ public class DeviceService {
         return deviceRepository.findAllByUserId(userId);
     }
 
+
     public Device findByDevEUI(String name){
         return deviceRepository.findByDevEUI(name);}
 }

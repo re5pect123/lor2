@@ -13,11 +13,27 @@ public class Device {
     int id;
 
     String devEUI; // unique ID of end device
-    String appEUI; // aplication server
-    String appKey; // message for device
     String userId;
+    String name;
     String status;
+    String groupId;
     String batteryStatus;
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getId() {
         return id;
@@ -33,22 +49,6 @@ public class Device {
 
     public void setDevEUI(String devEUI) {
         this.devEUI = devEUI;
-    }
-
-    public String getAppEUI() {
-        return appEUI;
-    }
-
-    public void setAppEUI(String appEUI) {
-        this.appEUI = appEUI;
-    }
-
-    public String getAppKey() {
-        return appKey;
-    }
-
-    public void setAppKey(String appKey) {
-        this.appKey = appKey;
     }
 
     public String getUserId() {
@@ -73,5 +73,18 @@ public class Device {
 
     public void setBatteryStatus(String batteryStatus) {
         this.batteryStatus = batteryStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "Device{" +
+                "id=" + id +
+                ", devEUI='" + devEUI + '\'' +
+                ", userId='" + userId + '\'' +
+                ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
+                ", groupId='" + groupId + '\'' +
+                ", batteryStatus='" + batteryStatus + '\'' +
+                '}';
     }
 }

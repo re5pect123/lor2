@@ -1,5 +1,6 @@
 package com.webapp.lora.controller;
 
+import com.webapp.lora.entity.Device;
 import com.webapp.lora.entity.Group;
 import com.webapp.lora.entity.User;
 import com.webapp.lora.entity.wrapper.LoginWrapper;
@@ -41,7 +42,7 @@ public class GroupController {
         }
         if(userDb != null){
             loginWrapper.getGroup().setUserId(String.valueOf(userDb.getId()));
-            loginWrapper.getGroup().setActivate("y");
+
             groupService.saveGroup(loginWrapper.getGroup());
             return Collections.singletonMap("message","sucess add new group");
         }
@@ -64,35 +65,41 @@ public class GroupController {
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
 
-        if(userDb != null){
+        if(userDb != null) {
             // sve grupe koje pripadaju tom useru
             List<Group> groups = groupService.findAllByUserId(String.valueOf(userDb.getId()));
 
-            for (int i = 0; i < groups.size(); i++) {
-                if (groups.get(i).getName().equals(loginWrapper.getGroup().getName())
-                        && groups.get(i).getDeviceId() != null
-                        && !groups.get(i).getDeviceId().equals(String.valueOf(loginWrapper.getDevice().getId()))) {
+            List<Device> devices = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
 
-                    loginWrapper.getGroup().setDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
-                    loginWrapper.getGroup().setActivate("y");
-                    loginWrapper.getGroup().setUserId(groups.get(i).getUserId());
-                    groupService.saveGroup(loginWrapper.getGroup());
-                    return Collections.singletonMap("message", "add new device to group");
-                }
-
-                if (groups.get(i).getName().equals(loginWrapper.getGroup().getName())){
-                    loginWrapper.getGroup().setId(groups.get(i).getId());
-                    loginWrapper.getGroup().setDeviceId(String.valueOf(loginWrapper.getDevice().getId()));
-                    loginWrapper.getGroup().setActivate("y");
-                    loginWrapper.getGroup().setUserId(groups.get(i).getUserId());
-                }else {
-                    return Collections.singletonMap("message","denied add device to group, pls check group name");
+            Device dev = null;
+            for (int i = 0; i < devices.size(); i++) {
+                if (devices.get(i).getId() == loginWrapper.getDevice().getId()) {
+                    dev = devices.get(i);
+                    System.out.println(dev);
                 }
             }
-            groupService.saveGroup(loginWrapper.getGroup());
-            return Collections.singletonMap("message","add device to group");
-        }
-        return Collections.singletonMap("message","check login");
+            if (dev == null) {
+                return Collections.singletonMap("message", "Ne postoji trazeni uredjaj.");
+            }
+
+            Group group = null;
+            for (int i = 0; i < groups.size(); i++) {
+                if (groups.get(i).getId() == loginWrapper.getGroup().getId()) {
+                    group = groups.get(i);
+
+                    System.out.println(String.valueOf(groups.get(i).getId()));
+                    dev.setGroupId(String.valueOf(groups.get(i).getId()));
+
+                    deviceService.addDevice(dev);
+
+                    return Collections.singletonMap("message", "Uspesno ste dodali uredjaj u grupu.");
+                }
+
+            }
+            if (group == null) {
+                return Collections.singletonMap("message", "Ne postoji trazena grupa");
+            }
+        } return Collections.singletonMap("message", "Korisnik ne postoji");
     }
 
     @PostMapping("/find-all-device-by-group")
@@ -113,10 +120,10 @@ public class GroupController {
 
         Group updateGroup = groupService.findByName(loginWrapper.getGroup().getName());
 
-        loginWrapper.getGroup().setActivate("y");
+
         loginWrapper.getGroup().setId(updateGroup.getId());
         loginWrapper.getGroup().setName(updateGroup.getName());
-        loginWrapper.getGroup().setDeviceId(updateGroup.getDeviceId());
+
         loginWrapper.getGroup().setUserId(updateGroup.getUserId());
 
         groupService.saveGroup(loginWrapper.getGroup());
@@ -131,10 +138,10 @@ public class GroupController {
 
         Group updateGroup = groupService.findByName(loginWrapper.getGroup().getName());
 
-        loginWrapper.getGroup().setActivate("n");
+
         loginWrapper.getGroup().setId(updateGroup.getId());
         loginWrapper.getGroup().setName(updateGroup.getName());
-        loginWrapper.getGroup().setDeviceId(updateGroup.getDeviceId());
+
         loginWrapper.getGroup().setUserId(updateGroup.getUserId());
 
         groupService.saveGroup(loginWrapper.getGroup());

@@ -12,8 +12,7 @@ public class Group {
 
     String name;
     String userId;
-    String deviceId;
-    String activate;
+    String iconId;
 
     public int getId() {
         return id;
@@ -39,19 +38,11 @@ public class Group {
         this.userId = userId;
     }
 
-    public String getDeviceId() {
-        return deviceId;
+    public String getIconId() {
+        return iconId;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public String getActivate() {
-        return activate;
-    }
-
-    public void setActivate(String activate) {
-        this.activate = activate;
+    public void setIconId(String iconId) {
+        this.iconId = iconId;
     }
 }
