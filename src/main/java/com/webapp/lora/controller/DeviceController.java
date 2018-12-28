@@ -34,7 +34,7 @@ public class DeviceController {
         Device existDevice = deviceService.findByDevEUI(loginWrapper.getDevice().getDevEUI());
         if (existDevice != null){
             if (existDevice.getDevEUI().equals(loginWrapper.getDevice().getDevEUI())){
-                return Collections.singletonMap("message","deviceEUI must be unique, you have one device with this name");
+                return Collections.singletonMap("message", "Uređaj je već aktiviran");
             }
         } else
         if(userDb != null){
@@ -42,9 +42,9 @@ public class DeviceController {
             loginWrapper.getDevice().setStatus("Deaktiviran");
             loginWrapper.getDevice().setBatteryStatus("89");
             deviceService.addDevice(loginWrapper.getDevice());
-            return Collections.singletonMap("message","sucess add new device");
+            return Collections.singletonMap("message","Uspešno ste dodali novi uređaj");
         }
-        return Collections.singletonMap("message","check login");
+        return Collections.singletonMap("message","Pogrešni pristupni parametri");
     }
 
     @PostMapping("/find-all-devices")

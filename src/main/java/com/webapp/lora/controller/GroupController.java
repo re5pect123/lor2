@@ -37,16 +37,16 @@ public class GroupController {
         List<Group> existGroup = groupService.findAllByUserId(String.valueOf(userDb.getId()));
         for(int i = 0; i < existGroup.size(); i ++){
             if (existGroup.get(i).getName().equals(loginWrapper.getGroup().getName())){
-                return Collections.singletonMap("message","this group exist in db, create group with other name");
+                return Collections.singletonMap("message","Grupa sa imenom " + loginWrapper.getGroup().getName() + " već postoji");
             }
         }
         if(userDb != null){
             loginWrapper.getGroup().setUserId(String.valueOf(userDb.getId()));
 
             groupService.saveGroup(loginWrapper.getGroup());
-            return Collections.singletonMap("message","sucess add new group");
+            return Collections.singletonMap("message","Uspešno ste dodali novu grupu");
         }
-        return Collections.singletonMap("message","check login");
+        return Collections.singletonMap("message","Pogrešni pristupni parametri");
     }
 
     @PostMapping("/find-all-group")
@@ -79,7 +79,7 @@ public class GroupController {
                 }
             }
             if (dev == null) {
-                return Collections.singletonMap("message", "Ne postoji trazeni uredjaj.");
+                return Collections.singletonMap("message", "Ne postoji traženi uređaj");
             }
 
             Group group = null;
@@ -92,12 +92,12 @@ public class GroupController {
 
                     deviceService.addDevice(dev);
 
-                    return Collections.singletonMap("message", "Uspesno ste dodali uredjaj u grupu.");
+                    return Collections.singletonMap("message", "Uspešno ste dodali uređaj u grupu");
                 }
 
             }
             if (group == null) {
-                return Collections.singletonMap("message", "Ne postoji trazena grupa");
+                return Collections.singletonMap("message", "Ne postoji tražena grupa");
             }
         } return Collections.singletonMap("message", "Korisnik ne postoji");
     }
