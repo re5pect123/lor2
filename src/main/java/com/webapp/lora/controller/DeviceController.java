@@ -15,9 +15,12 @@ import org.springframework.web.context.annotation.RequestScope;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 public class DeviceController {
+
+    org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(DeviceController.class);
 
     @Autowired
     DeviceService deviceService;
@@ -27,6 +30,7 @@ public class DeviceController {
 
     @PostMapping("/add-device")
     public Map addDevice(@RequestBody LoginWrapper loginWrapper){
+        logger.info("Request add-device: " + loginWrapper);
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
@@ -34,6 +38,7 @@ public class DeviceController {
         Device existDevice = deviceService.findByDevEUI(loginWrapper.getDevice().getDevEUI());
         if (existDevice != null){
             if (existDevice.getDevEUI().equals(loginWrapper.getDevice().getDevEUI())){
+                logger.info("Response: " + "Uređaj je već aktiviran");
                 return Collections.singletonMap("message", "Uređaj je već aktiviran");
             }
         } else
@@ -42,24 +47,30 @@ public class DeviceController {
             loginWrapper.getDevice().setStatus("Deaktiviran");
             loginWrapper.getDevice().setBatteryStatus("89");
             deviceService.addDevice(loginWrapper.getDevice());
+            logger.info("Response: " + "Uspešno ste dodali novi uređaj");
             return Collections.singletonMap("message","Uspešno ste dodali novi uređaj");
         }
+        logger.info("Response: " + "Pogrešni pristupni parametri");
         return Collections.singletonMap("message","Pogrešni pristupni parametri");
     }
 
     @PostMapping("/find-all-devices")
     public List<Device> findAllDevices(@RequestBody User user){
+        logger.info("Request find-all-devices: " + user);
         User userDb = userService.findAllByUserNameAndPassword(
                 user.getUserName(),
                 user.getPassword());
 
         if(userDb != null){
             List<Device> allDevicesForUser = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
+            logger.info("Response: " + allDevicesForUser);
             return allDevicesForUser;
         }
+        logger.info("Response null: " + " Korisnik ne postoji");
         return null;
     }
 
+    @Deprecated
     @PostMapping("/find-one-device")
     public Device findByDevEUI(@RequestBody LoginWrapper loginWrapper){
         User userDb = userService.findAllByUserNameAndPassword(
@@ -74,6 +85,7 @@ public class DeviceController {
 
     @PostMapping("/set-group-status")
     public Map groupStatus(@RequestBody LoginWrapper loginWrapper){
+        logger.info("Request set-group-status: " + loginWrapper);
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
@@ -85,18 +97,24 @@ public class DeviceController {
                 if (Integer.valueOf(devices.get(i).getGroupId()) == loginWrapper.getGroup().getId()) {
                     Device dev = devices.get(i);
                     dev.setStatus(loginWrapper.getDevice().getStatus());
-                    System.out.println(dev);
+                    logger.info("Set status za grupu uredjaja " + dev);
                     deviceService.addDevice(dev);
+                } else{
+                    logger.info("Response:  Proverite id grupe uredjaja izabrali ste id koji nije postojeći");
+                    return Collections.singletonMap("message", "Proverite id grupe uredjaja izabrali ste id koji nije postojeći");
                 }
             }
         }else {
+            logger.info("Response: " + "Korisnik nije registrovan");
             return Collections.singletonMap("message", "Korisnik nije registrovan");
         }
+        logger.info("Response:  Status grupe je: " + loginWrapper.getDevice().getStatus());
         return Collections.singletonMap("message", "Status grupe je " + loginWrapper.getDevice().getStatus());
     }
 
     @PostMapping("/set-device-status")
     public Map deviceStatus(@RequestBody LoginWrapper loginWrapper){
+        logger.info("Request set-device-status: " + loginWrapper);
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
@@ -108,13 +126,18 @@ public class DeviceController {
                 if (Integer.valueOf(devices.get(i).getId()) == loginWrapper.getDevice().getId()) {
                     Device dev = devices.get(i);
                     dev.setStatus(loginWrapper.getDevice().getStatus());
-                    System.out.println(dev);
+                    logger.info("Set status za uredjaj " + dev);
                     deviceService.addDevice(dev);
+                }else{
+                    logger.info("Response:  Proverite id uredjaja izabrali ste id koji nije postojeći");
+                    return Collections.singletonMap("message", "Proverite id uredjaja izabrali ste id koji nije postojeći");
                 }
             }
         }else {
+            logger.info("Response: " + "Korisnik nije registrovan");
             return Collections.singletonMap("message", "Korisnik nije registrovan");
         }
+        logger.info("Response:  Status uredjaja je: " + loginWrapper.getDevice().getStatus());
         return Collections.singletonMap("message", "Status uredjaja je " + loginWrapper.getDevice().getStatus());
     }
 

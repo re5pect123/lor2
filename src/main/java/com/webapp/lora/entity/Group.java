@@ -45,4 +45,14 @@ public class Group {
     public void setIconId(String iconId) {
         this.iconId = iconId;
     }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", userId='" + userId + '\'' +
+                ", iconId='" + iconId + '\'' +
+                '}';
+    }
 }

@@ -33,4 +33,13 @@ public class LoginWrapper {
     public void setGroup(Group group) {
         this.group = group;
     }
+
+    @Override
+    public String toString() {
+        return "LoginWrapper{" +
+                "user=" + user +
+                ", device=" + device +
+                ", group=" + group +
+                '}';
+    }
 }

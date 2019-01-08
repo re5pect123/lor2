@@ -13,27 +13,35 @@ import java.util.Map;
 @RestController
 public class UserController {
 
+    org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(UserController.class);
+
     @Autowired
     UserService userService;
 
     @PostMapping("/register")
     public Map saveUser(@RequestBody User user){
+        logger.info("Request: " + user);
         User userNameExist = userService.findAllByUserName(user.getUserName());
 
         if (userNameExist != null){
-            return Collections.singletonMap("message","This username exist in db, pls use different username");
+            logger.info("Response register: " + "Korisnik sa ovim imenom postoji, odaberite drugo ime");
+            return Collections.singletonMap("message","Korisnik sa ovim imenom postoji, odaberite drugo ime");
         }
         userService.saveUser(user);
-        return Collections.singletonMap("message","Success register new user");
+        logger.info("Response: " + "Uspešno ste se registrovali");
+        return Collections.singletonMap("message","Uspešno ste se registrovali");
     }
 
     @PostMapping("/login")
     public Map login(@RequestBody User user){
+        logger.info("Request login: " + user);
         User existUser = userService.findAllByUserNameAndPassword(user.getUserName(), user.getPassword());
 
         if (existUser != null) {
-            return Collections.singletonMap("message", "success login");
+            logger.info("Response: " + "Uspešno ste se ulogovali");
+            return Collections.singletonMap("message", "Uspešno ste se ulogovali");
         }
-        return Collections.singletonMap("message", "check cred, username or password incorect");
+        logger.info("Response: " + "Proverite korisničko ime ili šifru");
+        return Collections.singletonMap("message", "Proverite korisničko ime ili šifru");
     }
 }

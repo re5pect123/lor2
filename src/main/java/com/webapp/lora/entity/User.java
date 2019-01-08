@@ -63,4 +63,16 @@ public class User {
     public void setDevice(String device) {
         this.device = device;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", msisdn='" + msisdn + '\'' +
+                ", pin='" + pin + '\'' +
+                ", device='" + device + '\'' +
+                '}';
+    }
 }

@@ -19,6 +19,8 @@ import java.util.Map;
 @RestController
 public class GroupController {
 
+    org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Group.class);
+
     @Autowired
     GroupService groupService;
 
@@ -30,45 +32,52 @@ public class GroupController {
 
     @PostMapping("/create-group")
     public Map saveGroup(@RequestBody LoginWrapper loginWrapper){
+        logger.info("Request create-group: " + loginWrapper);
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
 
-        List<Group> existGroup = groupService.findAllByUserId(String.valueOf(userDb.getId()));
-        for(int i = 0; i < existGroup.size(); i ++){
-            if (existGroup.get(i).getName().equals(loginWrapper.getGroup().getName())){
-                return Collections.singletonMap("message","Grupa sa imenom " + loginWrapper.getGroup().getName() + " već postoji");
-            }
-        }
         if(userDb != null){
+            List<Group> existGroup = groupService.findAllByUserId(String.valueOf(userDb.getId()));
+            if (existGroup != null){
+                for(int i = 0; i < existGroup.size(); i ++){
+                    if (existGroup.get(i).getName().equals(loginWrapper.getGroup().getName())){
+                        logger.info("Response: " + "Grupa sa imenom " + loginWrapper.getGroup().getName() + " već postoji");
+                        return Collections.singletonMap("message","Grupa sa imenom " + loginWrapper.getGroup().getName() + " već postoji");
+                    }
+                }
+            }
             loginWrapper.getGroup().setUserId(String.valueOf(userDb.getId()));
 
             groupService.saveGroup(loginWrapper.getGroup());
+            logger.info("Response: " + "Uspešno ste dodali novu grupu");
             return Collections.singletonMap("message","Uspešno ste dodali novu grupu");
         }
+        logger.info("Response: " + "Pogrešni pristupni parametri");
         return Collections.singletonMap("message","Pogrešni pristupni parametri");
     }
 
     @PostMapping("/find-all-group")
     public List<Group> findAllGroup(@RequestBody User user){
-
+        logger.info("Request find-all-group: " + user);
         User userDb = userService.findAllByUserNameAndPassword(
                 user.getUserName(),
                 user.getPassword());
-
-        return groupService.findAllByUserId(String.valueOf(userDb.getId()));
+        if (userDb != null){
+            return groupService.findAllByUserId(String.valueOf(userDb.getId()));
+        }
+        return null;
     }
 
     @PostMapping("/add-device-to-group")
     public Map addDeviceToGroup(@RequestBody LoginWrapper loginWrapper){
+        logger.info("Request add-device-to-group: " + loginWrapper);
         User userDb = userService.findAllByUserNameAndPassword(
                 loginWrapper.getUser().getUserName(),
                 loginWrapper.getUser().getPassword());
 
         if(userDb != null) {
-            // sve grupe koje pripadaju tom useru
             List<Group> groups = groupService.findAllByUserId(String.valueOf(userDb.getId()));
-
             List<Device> devices = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
 
             Device dev = null;
@@ -79,6 +88,7 @@ public class GroupController {
                 }
             }
             if (dev == null) {
+                logger.info("Response: " + "Ne postoji traženi uređaj");
                 return Collections.singletonMap("message", "Ne postoji traženi uređaj");
             }
 
@@ -91,17 +101,20 @@ public class GroupController {
                     dev.setGroupId(String.valueOf(groups.get(i).getId()));
 
                     deviceService.addDevice(dev);
-
+                    logger.info("Response: " + "Uspešno ste dodali uređaj u grupu");
                     return Collections.singletonMap("message", "Uspešno ste dodali uređaj u grupu");
                 }
 
             }
             if (group == null) {
+                logger.info("Response: " + "Ne postoji tražena grupa");
                 return Collections.singletonMap("message", "Ne postoji tražena grupa");
             }
+            logger.info("Response: " + "Korisnik ne postoji");
         } return Collections.singletonMap("message", "Korisnik ne postoji");
     }
 
+    @Deprecated
     @PostMapping("/find-all-device-by-group")
     public List<Group> findAllGroup(@RequestBody LoginWrapper loginWrapper){
 
@@ -120,7 +133,6 @@ public class GroupController {
 
         Group updateGroup = groupService.findByName(loginWrapper.getGroup().getName());
 
-
         loginWrapper.getGroup().setId(updateGroup.getId());
         loginWrapper.getGroup().setName(updateGroup.getName());
 
@@ -137,7 +149,6 @@ public class GroupController {
                 loginWrapper.getUser().getPassword());
 
         Group updateGroup = groupService.findByName(loginWrapper.getGroup().getName());
-
 
         loginWrapper.getGroup().setId(updateGroup.getId());
         loginWrapper.getGroup().setName(updateGroup.getName());
