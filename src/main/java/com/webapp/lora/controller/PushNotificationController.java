@@ -1,5 +1,6 @@
 package com.webapp.lora.controller;
 
+import com.webapp.lora.entity.Group;
 import com.webapp.lora.model.NotificationData;
 import com.webapp.lora.model.NotificationRequestModel;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +20,11 @@ import java.lang.reflect.Type;
 @RestController
 public class PushNotificationController {
 
+    org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Group.class);
+
     @GetMapping("/test-notification")
     public void test() throws IOException {
-        System.out.println("Welcome to Developine");
+        logger.info("*** SEND NOTIFICATION! ***");
 
         DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost postRequest = new HttpPost(
@@ -30,8 +33,8 @@ public class PushNotificationController {
         NotificationRequestModel notificationRequestModel = new NotificationRequestModel();
         NotificationData notificationData = new NotificationData();
 
-        notificationData.setDetail("Detail");
-        notificationData.setTitle("title");
+        notificationData.setDetail("Senzor je aktivan!");
+        notificationData.setTitle("Lora");
         notificationRequestModel.setData(notificationData);
         notificationRequestModel.setTo("/topics/all");
 
@@ -47,7 +50,7 @@ public class PushNotificationController {
         postRequest.addHeader("Authorization", "key=AAAA0_QWZXc:APA91bEzNN4vmGlwhKnIbulLa7YoLbkb1Gq9rz3XiGBIUgcsM4COD8WkmLbvt0eRo5eko51nMquC5kq0RaQ1bmaRIra1-AW0uObJegvKeHt-XLd9PtMPLSBEx5_bIvP-j5Zt5iel9iqL");
         postRequest.setEntity(input);
 
-        System.out.println("request:" + json);
+        logger.info("request:" + json);
 
         HttpResponse response = httpClient.execute(postRequest);
 
@@ -56,7 +59,7 @@ public class PushNotificationController {
                     + response.getStatusLine().getStatusCode());
         } else if (response.getStatusLine().getStatusCode() == 200) {
 
-            System.out.println("response:" + EntityUtils.toString(response.getEntity()));
+            logger.info("response:" + EntityUtils.toString(response.getEntity()));
 
         }
     }

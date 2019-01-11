@@ -94,7 +94,7 @@ public class DeviceController {
             List<Device> devices = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
 
             for (int i = 0; i < devices.size(); i++) {
-                if (Integer.valueOf(devices.get(i).getGroupId()) == loginWrapper.getGroup().getId()) {
+                if (Integer.parseInt(devices.get(i).getGroupId()) == loginWrapper.getGroup().getId()) {
                     Device dev = devices.get(i);
                     dev.setStatus(loginWrapper.getDevice().getStatus());
                     logger.info("Set status za grupu uredjaja " + dev);
@@ -123,14 +123,16 @@ public class DeviceController {
             List<Device> devices = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
 
             for (int i = 0; i < devices.size(); i++) {
-                if (Integer.valueOf(devices.get(i).getId()) == loginWrapper.getDevice().getId()) {
+                logger.info("INTEGER.VALUE OF " + Integer.valueOf(devices.get(i).getId()) + " Login wrapper " + loginWrapper.getDevice().getId());
+                logger.info("devices size " + devices.size());
+
+                if (devices.get(i).getId() == loginWrapper.getDevice().getId()) {
                     Device dev = devices.get(i);
                     dev.setStatus(loginWrapper.getDevice().getStatus());
                     logger.info("Set status za uredjaj " + dev);
                     deviceService.addDevice(dev);
                 }else{
                     logger.info("Response:  Proverite id uredjaja izabrali ste id koji nije postojeći");
-                    return Collections.singletonMap("message", "Proverite id uredjaja izabrali ste id koji nije postojeći");
                 }
             }
         }else {
