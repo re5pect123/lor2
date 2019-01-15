@@ -94,6 +94,7 @@ public class Device {
                 ", status='" + status + '\'' +
                 ", groupId='" + groupId + '\'' +
                 ", batteryStatus='" + batteryStatus + '\'' +
+                ", temperature='" + temperature + '\'' +
                 '}';
     }
 }

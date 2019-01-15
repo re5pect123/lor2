@@ -45,30 +45,15 @@ public class DeviceController {
         if(userDb != null){
             loginWrapper.getDevice().setUserId(String.valueOf(userDb.getId()));
             loginWrapper.getDevice().setStatus("Deaktiviran");
-            loginWrapper.getDevice().setBatteryStatus("89");
             loginWrapper.getDevice().setTemperature("24.3");
+            loginWrapper.getDevice().setBatteryStatus("77");
             deviceService.addDevice(loginWrapper.getDevice());
             logger.info("Response: " + "Uspešno ste dodali novi uređaj");
+            logger.info("Dodati uredjaj je: " + loginWrapper);
             return Collections.singletonMap("message","Uspešno ste dodali novi uređaj");
         }
         logger.info("Response: " + "Pogrešni pristupni parametri");
         return Collections.singletonMap("message","Pogrešni pristupni parametri");
-    }
-
-    @PostMapping("/find-all-devices")
-    public List<Device> findAllDevices(@RequestBody User user){
-        logger.info("Request find-all-devices: " + user);
-        User userDb = userService.findAllByUserNameAndPassword(
-                user.getUserName(),
-                user.getPassword());
-
-        if(userDb != null){
-            List<Device> allDevicesForUser = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
-            logger.info("Response: " + allDevicesForUser);
-            return allDevicesForUser;
-        }
-        logger.info("Response null: " + " Korisnik ne postoji");
-        return null;
     }
 
     @Deprecated
@@ -81,6 +66,23 @@ public class DeviceController {
         if(userDb != null){
             return deviceService.findByDevEUI(loginWrapper.getDevice().getDevEUI());
         }
+        return null;
+    }
+
+    @PostMapping("/find-all-devices")
+    public List<Device> findAllDevices(@RequestBody User user){
+        logger.info("Request find-all-devices: " + user);
+        User userDb = userService.findAllByUserNameAndPassword(
+                user.getUserName(),
+                user.getPassword());
+
+        if(userDb != null){
+            List<Device> allDevicesForUser1 = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
+            logger.info("Response with temp: " + allDevicesForUser1);
+
+            return allDevicesForUser1;
+        }
+        logger.info("Response null: " + " Korisnik ne postoji");
         return null;
     }
 
@@ -101,7 +103,7 @@ public class DeviceController {
                     logger.info("Set status za grupu uredjaja " + dev);
                     deviceService.addDevice(dev);
                 } else{
-                    logger.info("Response:  Proverite id grupe uredjaja izabrali ste id koji nije postojeći");
+                    logger.info("Response ispis samo:  Proverite id grupe uredjaja izabrali ste id koji nije postojeći");
                     return Collections.singletonMap("message", "Proverite id grupe uredjaja izabrali ste id koji nije postojeći");
                 }
             }
@@ -124,16 +126,13 @@ public class DeviceController {
             List<Device> devices = deviceService.findAllByUserId(String.valueOf(userDb.getId()));
 
             for (int i = 0; i < devices.size(); i++) {
-                logger.info("INTEGER.VALUE OF " + Integer.valueOf(devices.get(i).getId()) + " Login wrapper " + loginWrapper.getDevice().getId());
-                logger.info("devices size " + devices.size());
-
                 if (devices.get(i).getId() == loginWrapper.getDevice().getId()) {
                     Device dev = devices.get(i);
                     dev.setStatus(loginWrapper.getDevice().getStatus());
                     logger.info("Set status za uredjaj " + dev);
                     deviceService.addDevice(dev);
                 }else{
-                    logger.info("Response:  Proverite id uredjaja izabrali ste id koji nije postojeći");
+                    logger.info("Response ispis samo:  Proverite id uredjaja izabrali ste id koji nije postojeći");
                 }
             }
         }else {
