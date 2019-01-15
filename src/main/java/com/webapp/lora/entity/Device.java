@@ -18,6 +18,7 @@ public class Device {
     String status;
     String groupId;
     String batteryStatus;
+    String temperature;
 
     public String getGroupId() {
         return groupId;
@@ -73,6 +74,14 @@ public class Device {
 
     public void setBatteryStatus(String batteryStatus) {
         this.batteryStatus = batteryStatus;
+    }
+
+    public String getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(String temperature) {
+        this.temperature = temperature;
     }
 
     @Override

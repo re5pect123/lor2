@@ -46,6 +46,7 @@ public class DeviceController {
             loginWrapper.getDevice().setUserId(String.valueOf(userDb.getId()));
             loginWrapper.getDevice().setStatus("Deaktiviran");
             loginWrapper.getDevice().setBatteryStatus("89");
+            loginWrapper.getDevice().setTemperature("24.3");
             deviceService.addDevice(loginWrapper.getDevice());
             logger.info("Response: " + "Uspešno ste dodali novi uređaj");
             return Collections.singletonMap("message","Uspešno ste dodali novi uređaj");
